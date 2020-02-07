@@ -118,6 +118,16 @@ USE_L10N = True
 
 USE_TZ = True
 
+TIME_INPUT_FORMATS = [
+    '%I:%M %p',  # 6:22 PM
+    '%I:%M%p',  # 6:22PM
+    '%I %p',  # 6 PM
+    '%I:%M:%S %p',  # 6:22:44 PM
+    '%H:%M:%S',     # '14:30:59'
+    '%H:%M:%S.%f',  # '14:30:59.000200'
+    '%H:%M',        # '14:30'
+]
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

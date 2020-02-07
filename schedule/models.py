@@ -21,6 +21,10 @@ class EventTag(models.Model):
     tag = models.CharField(max_length=75, unique=True, choices = EventTypes.choices)
     def __str__(self):
         return str(self.EventTypes(self.tag).label)
+
+#Note: every panel guide/app I've seen does not list panelists, 
+#so there's no need to store them here
+#can be adjusted if desired
 class Event(models.Model):
     title = models.CharField(max_length=75)
     start_time = models.DateTimeField()
@@ -32,7 +36,8 @@ class Event(models.Model):
         return self.title
 
 class Attendee(models.Model):
-    user = models.OneToOneField(User, on_delete = models.CASCADE)
+    #TODO: replace with google auth login
+    user = models.OneToOneField(User, on_delete = models.CASCADE, blank = True)
     screenname = models.CharField(max_length=75,blank=True)
-    hosted_events= models.ManyToManyField(Event,blank=True,related_name='hostees') 
     liked_events = models.ManyToManyField(Event,blank=True,related_name='likees')
+    #TODO: add __str__ stuff once user auth info has been processed
