@@ -23,4 +23,6 @@ class EventSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     class Meta:
         model = Event
-        fields=('title','start_time','end_time','location','description','tags')
+        fields=('title','start_time','end_time','location','tags')
+
+#TODO: add separate serializer that pulls up description

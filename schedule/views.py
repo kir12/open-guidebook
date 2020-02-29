@@ -11,9 +11,7 @@ from .models import Event
 #MODIFIES: none
 #EFFECTS: loads up the next or previous 10 (adjustable) events on the event roster, or less, if not enough events to query for
 
+#regular serializer was more than enough lol
 class EventListing(generics.ListCreateAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer 
-
-def index(request):
-    return HttpResponse("schedule")
