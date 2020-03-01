@@ -51,22 +51,16 @@ class App extends Component{
 				<ul className = "list-group list-group-flush">
 					{this.state.data.map(evt => {
 						return (
-							<li className = "list-group-item" key = {evt.title}>
-								<p><b>{evt.title}</b></p>
-								<p>{this.displayTime(evt.start_time)} - {this.displayTime(evt.end_time)}, {evt.location}</p>
-								<p className="small tagline">{evt.tags.map(tg=>{return <span key = {tg.tag} className = "tagStyle" style ={{backgroundColor:colormap[tg.tag]}}>{tg.tag_screen}</span>})}</p>
-							</li>
+							<EventClass {...evt} />
 						);
 					})}
 				</ul>
 			</div>
 		);
 	}
-
-	displayTime(t){
+	static displayTime(t){
 		var datevar = new Date(t);
 		return datevar.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-		//return datevar.getHours() + ":" + datevar.getMinutes();
 	}
 
 	genColor(tag){
@@ -93,6 +87,29 @@ function StickyMenu(props){
 			</div>
 		</nav>
 	);
+}
+
+//each event is embedded inside its own class to handle events (and to store descriptions)
+class EventClass extends Component{
+	constructor(props){
+		super(props);
+		this.clickEvent = this.clickEvent.bind(this);
+	}
+	render(){
+		return(
+			<li onClick = {this.clickEvent} className = "list-group-item" key = {this.props.title}>
+				<p><b>{this.props.title}</b></p>
+				<p>{App.displayTime(this.props.start_time)} - {App.displayTime(this.props.end_time)}, {this.props.location}</p>
+				<p className="small tagline">{this.props.tags.map(tg=>{return <span key = {tg.tag} className = "tagStyle" style ={{backgroundColor:colormap[tg.tag]}}>{tg.tag_screen}</span>})}</p>
+			</li>
+		);
+	}
+
+	clickEvent(){
+		console.log(this.props.description);
+	}
+
+
 }
 
 export default App;

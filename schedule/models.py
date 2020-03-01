@@ -26,7 +26,7 @@ class EventTag(models.Model):
 #so there's no need to store them here
 #can be adjusted if desired
 class Event(models.Model):
-    title = models.CharField(max_length=75)
+    title = models.CharField(max_length=75, unique= True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     location = models.ForeignKey(Location,on_delete=models.CASCADE)
