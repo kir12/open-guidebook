@@ -40,7 +40,7 @@ class App extends Component{
 						<li className = "list-group-item" key = {evt.title}>
 							<p><b>{evt.title}</b></p>
 							<p>{this.displayTime(evt.start_time)} - {this.displayTime(evt.end_time)}, {evt.location}</p>
-							<p className="small">{evt.tags.map(tg=>{return <span key = {tg.tag} className = "tagStyle" style ={{backgroundColor:colormap[tg.tag]}}>{tg.tag_screen}</span>})}</p>
+							<p className="small tagline">{evt.tags.map(tg=>{return <span key = {tg.tag} className = "tagStyle" style ={{backgroundColor:colormap[tg.tag]}}>{tg.tag_screen}</span>})}</p>
 						</li>
 					);
 				})}
