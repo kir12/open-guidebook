@@ -26,10 +26,25 @@ class App extends Component{
 		};
 		//keeps track of if event page is active
 		this.changeActive = this.changeActive.bind(this);
+		this.changeActivePost = this.changeActivePost.bind(this);
 	}
 
-	changeActive(){
-		this.setState({eventActive:!this.state.changeActive});
+	changeActive(evt,details){
+		this.setState({eventActive:!this.state.eventActive},()=>{
+			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
+			var eventElement = (
+				<div className = {'eventPanel ' + showStatus}>
+					<h3 className = "mt-5">{evt.title}</h3>
+					{details}
+					<p>{evt.description}</p>
+				</div>
+			);
+			ReactDOM.render(eventElement,eventContainer);
+		});
+	}
+
+	changeActivePost(){
+		this.setState({eventActive:!this.state.eventActive});
 	}
 
 	componentDidMount() {
@@ -55,11 +70,11 @@ class App extends Component{
 	render() {
 		return (
 			<div>
-				<StickyMenu eventState={this.state.eventActive}/>
+				<StickyMenu handler={this.changeActivePost} eventState={this.state.eventActive}/>
 				<ul className = "list-group list-group-flush">
 					{this.state.data.map(evt => {
 						return (
-							<EventClass {...evt} handler={this.changeActive} />
+							<EventClass eventObj = {evt} handler={this.changeActive} eventState = {this.state.eventActive}/>
 						);
 					})}
 				</ul>
@@ -96,8 +111,8 @@ function StickyMenu(props){
 		var element = (
 			<div className = "navbar-collapse collapse">
 				<ul className="navbar-nav mr-auto">
-					<li className = "nav-item">
-						<a className="nav-link" href = "#"><i className="fas fa-backward"></i></a>
+					<li className = "nav-item" onClick={props.handler}>
+						<a className="nav-link" href = "#"><i className="fas fa-arrow-left"></i></a>
 					</li>
 				</ul>
 				<ul className="navbar-nav">
@@ -110,7 +125,7 @@ function StickyMenu(props){
 	}
 	return(
 		<nav className="navbar sticky-top navbar-light bg-light navbar-expand ">
-				{props.elementState ==false &&
+			{props.eventState ==false &&
 					<a className="navbar-brand" href="#">Schedule</a>}
 
 			{/*options, might wanna add hamburger collapse back if desired*/}
@@ -123,37 +138,22 @@ function StickyMenu(props){
 class EventClass extends Component{
 	constructor(props){
 		super(props);
-		this.clickEvent = this.clickEvent.bind(this);
+		//this.clickEvent = this.clickEvent.bind(this);
 		this.details = (
 			<div>
-				<p>{App.displayTime(this.props.start_time)} - {App.displayTime(this.props.end_time)}, {this.props.location}</p>
-				<p className="small tagline">{this.props.tags.map(tg=>{return <span key = {tg.tag} className = "tagStyle" style ={{backgroundColor:colormap[tg.tag]}}>{tg.tag_screen}</span>})}</p>
+				<p>{App.displayTime(this.props.eventObj.start_time)} - {App.displayTime(this.props.eventObj.end_time)}, {this.props.eventObj.location}</p>
+				<p className="small tagline">{this.props.eventObj.tags.map(tg=>{return <span key = {tg.tag} className = "tagStyle" style ={{backgroundColor:colormap[tg.tag]}}>{tg.tag_screen}</span>})}</p>
 			</div>
 		);
 	}
 	render(){
 		return(
-			<li onClick = {this.clickEvent} className = "list-group-item" key = {this.props.title}>
-				<p><b>{this.props.title}</b></p>
+			<li onClick = {()=>{this.props.handler(this.props.eventObj, this.details)}} className = "list-group-item" key = {this.props.eventObj.title}>
+				<p><b>{this.props.eventObj.title}</b></p>
 				{this.details}
 			</li>
 		);
 	}
-
-	clickEvent(){
-		console.log("click");
-		this.props.handler();
-		var eventElement = (
-			<div className = "eventPanel show">
-				<h3 className = "mt-5">{this.props.title}</h3>
-				{this.details}
-				<p>{this.props.description}</p>
-			</div>
-		);
-		ReactDOM.render(eventElement,eventContainer);
-	}
-
-
 }
 
 export default App;
