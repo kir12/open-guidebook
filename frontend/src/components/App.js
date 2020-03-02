@@ -78,35 +78,43 @@ class App extends Component{
 
 //generalized stickymenu
 function StickyMenu(props){
-	if(props.eventState == false){
+	if(props.eventState == false){//event is not active
 		var element = (
-			<ul className="navbar-nav">
-				<li className="nav-item">
-					<a className="nav-link" href="#"><i className="fas fa-filter"></i></a>
-				</li>
-				<li className="nav-item">
-					<a className = "nav-link" href = "#"><i className="fas fa-search"></i></a>
-				</li>
-			</ul>
+			<div className = "navbar-collapse collapse">
+				<ul className="navbar-nav">
+					<li className="nav-item">
+						<a className="nav-link" href="#"><i className="fas fa-filter"></i></a>
+					</li>
+					<li className="nav-item">
+						<a className = "nav-link" href = "#"><i className="fas fa-search"></i></a>
+					</li>
+				</ul>
+			</div>
 		);
 	}
-	else{
+	else{//event is active
 		var element = (
-			<ul className="navbar-nav">
-				<li className = "nav-item">
-					<a className="nav-link" href = "#">a thing</a>
-				</li>
-			</ul>
+			<div className = "navbar-collapse collapse">
+				<ul className="navbar-nav mr-auto">
+					<li className = "nav-item">
+						<a className="nav-link" href = "#"><i className="fas fa-backward"></i></a>
+					</li>
+				</ul>
+				<ul className="navbar-nav">
+					<li className="nav-item" href="#">
+						<a className="nav-link" href = "#"><i className="fas fa-bookmark"></i></a>
+					</li>
+				</ul>
+			</div>
 		);
 	}
 	return(
-		<nav className="navbar sticky-top navbar-light bg-light navbar-expand">
-			<a className="navbar-brand" href="#">Schedule</a>
+		<nav className="navbar sticky-top navbar-light bg-light navbar-expand ">
+				{props.elementState ==false &&
+					<a className="navbar-brand" href="#">Schedule</a>}
 
 			{/*options, might wanna add hamburger collapse back if desired*/}
-			<div className = "navbar-collapse collapse">
-				{element}
-			</div>
+			{element}
 		</nav>
 	);
 }
