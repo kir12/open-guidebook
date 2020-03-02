@@ -30,7 +30,10 @@ class App extends Component{
 	}
 
 	changeActive(evt,details){
-		this.setState({eventActive:!this.state.eventActive},()=>{
+		this.setState({eventActive:!this.state.eventActive,
+			eventObj:evt,
+			detailsXML:details
+		},()=>{
 			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
 			var eventElement = (
 				<div className = {'eventPanel ' + showStatus}>
@@ -44,7 +47,18 @@ class App extends Component{
 	}
 
 	changeActivePost(){
-		this.setState({eventActive:!this.state.eventActive});
+		this.setState({eventActive:!this.state.eventActive},()=>{
+			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
+			var eventElement = (
+				<div className = {'eventPanel ' + showStatus}>
+					<h3 className = "mt-5">{this.state.eventObj.title}</h3>
+					{this.state.details}
+					<p>{this.state.eventObj.description}</p>
+				</div>
+			);
+			ReactDOM.render(eventElement,eventContainer);
+
+		});
 	}
 
 	componentDidMount() {
