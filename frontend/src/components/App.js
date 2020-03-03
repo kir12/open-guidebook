@@ -33,7 +33,7 @@ class App extends Component{
 		this.setState({eventActive:!this.state.eventActive,
 			eventObj:evt,
 			detailsXML:details,
-			scrollNum:window.pageYOffset
+			scrollAmount: window.pageYOffset
 		},()=>{
 			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
 			var eventElement = (
@@ -43,12 +43,12 @@ class App extends Component{
 					<p>{evt.description}</p>
 				</div>
 			);
-			console.log(this.state.scrollNum);
 			ReactDOM.render(eventElement,eventContainer);
 		});
 	}
 
-	changeActivePost(){
+	changeActivePost(e){
+		e.preventDefault();
 		this.setState({eventActive:!this.state.eventActive},()=>{
 			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
 			var eventElement = (
@@ -59,13 +59,10 @@ class App extends Component{
 				</div>
 			);
 			ReactDOM.render(eventElement,eventContainer);
+			window.scrollTo(0,this.state.scrollAmount);
 		});
-		window.scrollTo(0,this.state.scrollNum);
 	}
 
-	componentWillUnmount(){
-		window.scrollTo(0,this.state.scrollNum);
-	}
 
 	componentDidMount() {
 		fetch("api/events")
@@ -131,7 +128,7 @@ function StickyMenu(props){
 		var element = (
 			<div className = "navbar-collapse collapse">
 				<ul className="navbar-nav mr-auto">
-					<li className = "nav-item" onClick={()=>{props.handler()}}>
+					<li className = "nav-item" onClick={(e)=>{props.handler(e)}}>
 						<a className="nav-link" href = "#"><i className="fas fa-arrow-left"></i></a>
 					</li>
 				</ul>
