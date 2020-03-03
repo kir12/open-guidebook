@@ -13,7 +13,7 @@ from .models import Event,EventTag
 
 #regular serializer was more than enough lol
 class EventListing(generics.ListCreateAPIView):
-    queryset = Event.objects.all()
+    queryset = Event.objects.all().order_by('start_time')
     serializer_class = EventSerializer 
 
 class TagListing(generics.ListCreateAPIView):

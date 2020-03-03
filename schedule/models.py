@@ -30,7 +30,7 @@ class Event(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     location = models.ForeignKey(Location,on_delete=models.CASCADE)
-    description = models.TextField(max_length=300)
+    description = models.TextField(max_length=600)
     tags = models.ManyToManyField(EventTag)
     def __str__(self):
         return self.title
