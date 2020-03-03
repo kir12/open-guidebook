@@ -32,7 +32,8 @@ class App extends Component{
 	changeActive(evt,details){
 		this.setState({eventActive:!this.state.eventActive,
 			eventObj:evt,
-			detailsXML:details
+			detailsXML:details,
+			scrollNum:window.pageYOffset
 		},()=>{
 			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
 			var eventElement = (
@@ -42,6 +43,7 @@ class App extends Component{
 					<p>{evt.description}</p>
 				</div>
 			);
+			console.log(this.state.scrollNum);
 			ReactDOM.render(eventElement,eventContainer);
 		});
 	}
@@ -57,8 +59,12 @@ class App extends Component{
 				</div>
 			);
 			ReactDOM.render(eventElement,eventContainer);
-
 		});
+		window.scrollTo(0,this.state.scrollNum);
+	}
+
+	componentWillUnmount(){
+		window.scrollTo(0,this.state.scrollNum);
 	}
 
 	componentDidMount() {
@@ -125,7 +131,7 @@ function StickyMenu(props){
 		var element = (
 			<div className = "navbar-collapse collapse">
 				<ul className="navbar-nav mr-auto">
-					<li className = "nav-item" onClick={props.handler}>
+					<li className = "nav-item" onClick={()=>{props.handler()}}>
 						<a className="nav-link" href = "#"><i className="fas fa-arrow-left"></i></a>
 					</li>
 				</ul>
