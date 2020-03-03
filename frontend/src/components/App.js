@@ -153,7 +153,7 @@ function StickyMenu(props){
 				</ul>
 				<ul className="navbar-nav">
 					<li className="nav-item" href="#">
-						<a className="nav-link" href = "#"><i className="fas fa-bookmark"></i></a>
+						<a className="nav-link" href = "#"><i className="far fa-bookmark"></i></a>
 					</li>
 				</ul>
 			</div>
@@ -185,8 +185,15 @@ class EventClass extends Component{
 	render(){
 		return(
 			<li onClick = {()=>{this.props.handler(this.props.eventObj, this.details)}} className = "list-group-item" key = {this.props.eventObj.title}>
-				<p><b>{this.props.eventObj.title}</b></p>
-				{this.details}
+				<div className = "row">
+					<div className = "col-11">
+						<p><b>{this.props.eventObj.title}</b></p>
+						{this.details}
+					</div>
+					<div className = "col-xs-auto align-self-center">
+						<i className="far fa-bookmark"></i>
+					</div>
+				</div>
 			</li>
 		);
 	}
