@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .serializers import EventSerializer
+from .serializers import EventSerializer, TagSerializer
 from rest_framework import generics
-from .models import Event
+from .models import Event,EventTag
 
 #Optional optimization feature, only use if needed
 #REQUIRES: upper limit timestamp to query results from (optional parameter), direction to query events from
@@ -15,3 +15,7 @@ from .models import Event
 class EventListing(generics.ListCreateAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer 
+
+class TagListing(generics.ListCreateAPIView):
+    queryset = EventTag.objects.all()
+    serializer_class = TagSerializer

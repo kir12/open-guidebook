@@ -18,7 +18,6 @@ class TagSerializer(serializers.ModelSerializer):
 
 #serializer for Event class
 class EventSerializer(serializers.ModelSerializer):
-    #location= LocationSerializer()
     location = serializers.StringRelatedField()
     tags = TagSerializer(many=True)
     class Meta:

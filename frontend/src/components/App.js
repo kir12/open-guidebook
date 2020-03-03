@@ -20,6 +20,7 @@ class App extends Component{
 		super(props);
 		this.state = {
 			data: [],
+			tagLoaded : false,
 			loaded: false,
 			placeholder: "Loading",
 			eventActive:false
@@ -79,6 +80,24 @@ class App extends Component{
 				return {
 					data,
 					loaded: true
+				};
+			});
+		});
+
+		fetch("api/eventTags")
+			.then(response=>{
+				if(response.status > 400){
+					return this.setState(() => {
+						return { placeholder: "Something went wrong!" };
+					});
+				}
+				return response.json();
+			})
+		.then(tagData => {
+			this.setState(()=>{
+				return{
+					tagData,
+					tagLoaded:true
 				};
 			});
 		});
