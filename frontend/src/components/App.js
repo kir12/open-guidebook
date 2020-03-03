@@ -28,8 +28,10 @@ class App extends Component{
 		//keeps track of if event page is active
 		this.changeActive = this.changeActive.bind(this);
 		this.changeActivePost = this.changeActivePost.bind(this);
+		this.filterCallback = this.filterCallback.bind(this);
 	}
 
+	//callback executed when a panel is selected
 	changeActive(evt,details){
 		this.setState({eventActive:!this.state.eventActive,
 			eventObj:evt,
@@ -41,6 +43,19 @@ class App extends Component{
 				<div className = {'eventPanel ' + showStatus}>
 					<h3 className = "mt-5">{evt.title}</h3>
 					{details}
+					{this.state.eventObj.guest_speakers != "" &&
+						<div>
+							{App.genEventHeader("Special Guest Speaker(s):")}
+							<p>{this.state.eventObj.guest_speakers}</p>
+						</div>
+					}
+					{this.state.eventObj.remark != "" &&
+						<div>
+							{App.genEventHeader("Remark about this Panel:")}
+							<p>{this.state.eventObj.remark}</p>
+						</div>
+					}
+					{App.genEventHeader("Description:")}
 					<p>{evt.description}</p>
 				</div>
 			);
@@ -48,6 +63,7 @@ class App extends Component{
 		});
 	}
 
+	//callback executed when panel is de-selected
 	changeActivePost(e){
 		e.preventDefault();
 		this.setState({eventActive:!this.state.eventActive},()=>{
@@ -64,7 +80,33 @@ class App extends Component{
 		});
 	}
 
+	filterCallback(e){
+		e.preventDefault();
+		this.setState({eventActive:!this.state.eventActive},()=>{
+			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
+			var eventElement = (
+				<div className = {'eventPanel ' + showStatus}>
+					<h3 className = "mt-5">Event Filter</h3>
+					{this.state.tagData.map(tg=>{
+						return(
+							<div className = "row">
+								<div className = "col-11">
+									<p className = "small tagline tagStyle" style = {{backgroundColor:colormap[tg.tag]}}> {tg.tag_screen} </p>
+								</div>
+								<div className = "col-1-">
+									<i className="far fa-square"></i>
+								</div>
+							</div>
+						);
+					})}
+				</div>
+			);
+			ReactDOM.render(eventElement,eventContainer);
+		});
+	}
 
+
+	//api call(s)
 	componentDidMount() {
 		fetch("api/events")
 			.then(response => {
@@ -103,10 +145,11 @@ class App extends Component{
 		});
 	}
 
+	//primary rendering of events
 	render() {
 		return (
 			<div>
-				<StickyMenu handler={this.changeActivePost} eventState={this.state.eventActive}/>
+				<StickyMenu handler={this.changeActivePost} filterCallback = {this.filterCallback} eventState={this.state.eventActive}/>
 				<ul className = "list-group list-group-flush">
 					{this.state.data.map(evt => {
 						return (
@@ -119,7 +162,11 @@ class App extends Component{
 	}
 	static displayTime(t){
 		var datevar = new Date(t);
-		return datevar.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+		return datevar.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit',timeZone:'America/Detroit'});
+	}
+	
+	static genEventHeader(header){
+		return (<p className = "text-center small eventHeader">{header}</p>);
 	}
 
 	genColor(tag){
@@ -133,7 +180,7 @@ function StickyMenu(props){
 		var element = (
 			<div className = "navbar-collapse collapse">
 				<ul className="navbar-nav">
-					<li className="nav-item">
+					<li className="nav-item" onClick = {(e)=>{props.filterCallback(e)}}>
 						<a className="nav-link" href="#"><i className="fas fa-filter"></i></a>
 					</li>
 					<li className="nav-item">
@@ -177,7 +224,7 @@ class EventClass extends Component{
 		//this.clickEvent = this.clickEvent.bind(this);
 		this.details = (
 			<div>
-				<p>{App.displayTime(this.props.eventObj.start_time)} - {App.displayTime(this.props.eventObj.end_time)}, {this.props.eventObj.location}</p>
+				<p className = "mb-0">{App.displayTime(this.props.eventObj.start_time)} - {App.displayTime(this.props.eventObj.end_time)}, {this.props.eventObj.location}</p>
 				<p className="small tagline">{this.props.eventObj.tags.map(tg=>{return <span key = {tg.tag} className = "tagStyle" style ={{backgroundColor:colormap[tg.tag]}}>{tg.tag_screen}</span>})}</p>
 			</div>
 		);

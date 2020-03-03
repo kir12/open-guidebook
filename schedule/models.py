@@ -29,8 +29,10 @@ class Event(models.Model):
     title = models.CharField(max_length=75, unique= True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
+    guest_speakers = models.CharField(blank=True, max_length=100)
     location = models.ForeignKey(Location,on_delete=models.CASCADE)
-    description = models.TextField(max_length=600)
+    remark = models.TextField(blank=True,max_length=100)
+    description = models.TextField(max_length=800)
     tags = models.ManyToManyField(EventTag)
     def __str__(self):
         return self.title
