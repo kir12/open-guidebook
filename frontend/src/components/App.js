@@ -89,14 +89,7 @@ class App extends Component{
 					<h3 className = "mt-5">Event Filter</h3>
 					{this.state.tagData.map(tg=>{
 						return(
-							<div className = "row">
-								<div className = "col-11">
-									<p className = "small tagline tagStyle" style = {{backgroundColor:colormap[tg.tag]}}> {tg.tag_screen} </p>
-								</div>
-								<div className = "col-1-">
-									<i className="far fa-square"></i>
-								</div>
-							</div>
+							<FilterObject tg = {tg}/>
 						);
 					})}
 				</div>
@@ -215,6 +208,31 @@ function StickyMenu(props){
 			{element}
 		</nav>
 	);
+}
+
+class FilterObject extends Component{
+	constructor(props){
+		super(props);
+		this.isChecked = false;
+		this.checkClick = this.checkClick.bind(this);
+	}
+
+	render(){
+		return (
+			<div className = "row">
+				<div className = "col-11">
+					<p className = "small tagline tagStyle" style = {{backgroundColor:colormap[this.props.tg.tag]}}> {this.props.tg.tag_screen} </p>
+				</div>
+				<div className = "col-xs-auto">
+					<i className={'far fa'+(this.state.isChecked ? '-check-':'')+'-square'}></i>
+				</div>
+			</div>
+		);
+	}
+
+	checkClick(){
+		this.setState({isChecked:!s.state.isChecked});
+	}
 }
 
 //each event is embedded inside its own class to handle events (and to store descriptions)
