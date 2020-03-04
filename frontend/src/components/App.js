@@ -24,9 +24,10 @@ class App extends Component{
 			tagLoaded : false,
 			loaded: false,
 			placeholder: "Loading",
-			eventActive:false
+			eventActive:false,
+			filterBarActive:false
 		};
-		//keeps track of if event page is active
+		//various callbacks registered here
 		this.changeActive = this.changeActive.bind(this);
 		this.changeActivePost = this.changeActivePost.bind(this);
 		this.filterCallback = this.filterCallback.bind(this);
@@ -35,17 +36,21 @@ class App extends Component{
 	}
 
 	//callback executed when a panel is selected
-	changeActive(evt,details){
+	changeActive(evt){
 		this.setState({eventActive:!this.state.eventActive,
 			eventObj:evt,
-			detailsXML:details,
 			scrollAmount: window.pageYOffset
 		},()=>{
 			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
 			var eventElement = (
 				<div className = {'eventPanel ' + showStatus}>
 					<h3 className = "mt-5">{evt.title}</h3>
-					{details}
+
+					<div>
+						<p className = "mb-0">{App.displayTime(evt.start_time)} - {App.displayTime(evt.end_time)}, {evt.location}</p>
+						<p className="small tagline">{evt.tags.map(tg=>{return <span key = {tg.tag} className = "tagStyle" style ={{backgroundColor:colormap[tg.tag]}}>{tg.tag_screen}</span>})}</p>
+					</div>
+
 					{this.state.eventObj.guest_speakers != "" &&
 						<div>
 							{App.genEventHeader("Special Guest Speaker(s):")}
@@ -67,7 +72,8 @@ class App extends Component{
 	}
 
 	//callback executed when panel is de-selected
-	changeActivePost(e){
+	//optional parameter filterActive to show bar
+	changeActivePost(e, filterActive = false){
 		e.preventDefault();
 		this.setState({eventActive:!this.state.eventActive,
 			filterData:[],
@@ -97,7 +103,7 @@ class App extends Component{
 							<FilterObject tg = {tg} addFilterQuery = {this.addFilterQuery}/>
 						);
 					})}
-					<h5 className = "text-center filterButton" onClick={this.filterSearch}>Show Results</h5>
+					<h5 className = "text-center filterButton" onClick={(e)=>{this.filterSearch(e)}}>Show Results</h5>
 				</div>
 			);
 			ReactDOM.render(eventElement,eventContainer);
@@ -116,7 +122,7 @@ class App extends Component{
 	}
 
 	//do the actual search for results, render with results, save old data, floop!
-	filterSearch(){
+	filterSearch(e){
 		var searchResults = this.state.data.filter(evt => {
 			for (var tag of evt.tags){
 				for (var filterTag of this.state.filterData){
@@ -125,7 +131,13 @@ class App extends Component{
 			}
 			return false;
 		});
-		console.log(searchResults);
+		this.setState({oldData:this.state.data, 
+			data:searchResults,
+			filterBarActive:true
+		},()=>{
+			console.log(this.state.data);
+			this.changeActivePost(e);
+		});
 	}
 
 	//api call(s)
@@ -171,7 +183,7 @@ class App extends Component{
 	render() {
 		return (
 			<div>
-				<StickyMenu handler={this.changeActivePost} filterCallback = {this.filterCallback} eventState={this.state.eventActive}/>
+				<StickyMenu handler={this.changeActivePost} filterCallback = {this.filterCallback} eventState={this.state.eventActive} filterBarActive={this.state.filterBarActive}/>
 				<ul className = "list-group list-group-flush">
 					{this.state.data.map(evt => {
 						return (
@@ -229,13 +241,27 @@ function StickyMenu(props){
 		);
 	}
 	return(
-		<nav className="navbar sticky-top navbar-light bg-light navbar-expand ">
-			{props.eventState ==false &&
-					<a className="navbar-brand" href="#">Schedule</a>}
+		<div className = "sticky-top">
+			<nav className="navbar navbar-light bg-light navbar-expand ">
+				{props.eventState ==false &&
+						<a className="navbar-brand" href="#">Schedule</a>}
 
-			{/*options, might wanna add hamburger collapse back if desired*/}
-			{element}
-		</nav>
+				{/*options, might wanna add hamburger collapse back if desired*/}
+				{element}
+			</nav>
+			<div>
+				{props.filterBarActive == true && props.eventState == false &&
+					<div className = "row small eventHeader" style={{marginRight:'0'}}>
+						<div className = "col-6">
+							<p className = "pl-3 mb-0">Filter Events Active</p>
+						</div>
+						<div className = "col-6 text-right">
+							<p className = "mb-0 pr-3"><i className="fas fa-times-circle"></i> Reset Filters</p>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
 	);
 }
 
@@ -271,20 +297,17 @@ class EventClass extends Component{
 	constructor(props){
 		super(props);
 		//this.clickEvent = this.clickEvent.bind(this);
-		this.details = (
-			<div>
-				<p className = "mb-0">{App.displayTime(this.props.eventObj.start_time)} - {App.displayTime(this.props.eventObj.end_time)}, {this.props.eventObj.location}</p>
-				<p className="small tagline">{this.props.eventObj.tags.map(tg=>{return <span key = {tg.tag} className = "tagStyle" style ={{backgroundColor:colormap[tg.tag]}}>{tg.tag_screen}</span>})}</p>
-			</div>
-		);
 	}
 	render(){
 		return(
-			<li onClick = {()=>{this.props.handler(this.props.eventObj, this.details)}} className = "list-group-item" key = {this.props.eventObj.title}>
+			<li onClick = {()=>{this.props.handler(this.props.eventObj)}} className = "list-group-item" key = {this.props.eventObj.title}>
 				<div className = "row">
 					<div className = "col-11">
 						<p><b>{this.props.eventObj.title}</b></p>
-						{this.details}
+						<div>
+							<p className = "mb-0">{App.displayTime(this.props.eventObj.start_time)} - {App.displayTime(this.props.eventObj.end_time)}, {this.props.eventObj.location}</p>
+							<p className="small tagline">{this.props.eventObj.tags.map(tg=>{return <span key = {tg.tag} className = "tagStyle" style ={{backgroundColor:colormap[tg.tag]}}>{tg.tag_screen}</span>})}</p>
+						</div>
 					</div>
 					<div className = "col-xs-auto align-self-center">
 						<i className="far fa-bookmark"></i>
