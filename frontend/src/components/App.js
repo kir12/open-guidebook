@@ -20,6 +20,7 @@ class App extends Component{
 		super(props);
 		this.state = {
 			data: [],
+			filterData:[],
 			tagLoaded : false,
 			loaded: false,
 			placeholder: "Loading",
@@ -29,6 +30,8 @@ class App extends Component{
 		this.changeActive = this.changeActive.bind(this);
 		this.changeActivePost = this.changeActivePost.bind(this);
 		this.filterCallback = this.filterCallback.bind(this);
+		this.addFilterQuery = this.addFilterQuery.bind(this);
+		this.filterSearch= this.filterSearch.bind(this);
 	}
 
 	//callback executed when a panel is selected
@@ -66,38 +69,64 @@ class App extends Component{
 	//callback executed when panel is de-selected
 	changeActivePost(e){
 		e.preventDefault();
-		this.setState({eventActive:!this.state.eventActive},()=>{
+		this.setState({eventActive:!this.state.eventActive,
+			filterData:[],
+		},()=>{
 			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
 			var eventElement = (
-				<div className = {'eventPanel ' + showStatus}>
-					<h3 className = "mt-5">{this.state.eventObj.title}</h3>
-					{this.state.details}
-					<p>{this.state.eventObj.description}</p>
-				</div>
+				<div className = {'eventPanel ' + showStatus}></div>
 			);
 			ReactDOM.render(eventElement,eventContainer);
 			window.scrollTo(0,this.state.scrollAmount);
 		});
 	}
 
+	//callback issued to generate filter menu
 	filterCallback(e){
 		e.preventDefault();
-		this.setState({eventActive:!this.state.eventActive},()=>{
+		this.setState({eventActive:!this.state.eventActive,
+			scrollAmount: window.pageYOffset
+		},()=>{
 			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
 			var eventElement = (
 				<div className = {'eventPanel ' + showStatus}>
 					<h3 className = "mt-5">Event Filter</h3>
+					<p>Feel free to select whatever event types you want, and see if any events come up.</p>
 					{this.state.tagData.map(tg=>{
 						return(
-							<FilterObject tg = {tg}/>
+							<FilterObject tg = {tg} addFilterQuery = {this.addFilterQuery}/>
 						);
 					})}
+					<h5 className = "text-center filterButton" onClick={this.filterSearch}>Show Results</h5>
 				</div>
 			);
 			ReactDOM.render(eventElement,eventContainer);
 		});
 	}
 
+	//callback to feed filter query back to mother app
+	addFilterQuery(tag, isChecked){
+		if(isChecked){
+			this.state.filterData.push(tag);
+		}
+		else{
+			var index = this.state.filterData.indexOf(tag);
+			this.state.filterData.splice(index,1);
+		}
+	}
+
+	//do the actual search for results
+	filterSearch(){
+		var searchResults = this.state.data.filter(evt => {
+			for (var tag of evt.tags){
+				for (var filterTag of this.state.filterData){
+					if(tag.tag == filterTag.tag){return true;}
+				}
+			}
+			return false;
+		});
+		console.log(searchResults);
+	}
 
 	//api call(s)
 	componentDidMount() {
@@ -213,7 +242,7 @@ function StickyMenu(props){
 class FilterObject extends Component{
 	constructor(props){
 		super(props);
-		this.isChecked = false;
+		this.state={isChecked:false};
 		this.checkClick = this.checkClick.bind(this);
 	}
 
@@ -223,15 +252,17 @@ class FilterObject extends Component{
 				<div className = "col-11">
 					<p className = "small tagline tagStyle" style = {{backgroundColor:colormap[this.props.tg.tag]}}> {this.props.tg.tag_screen} </p>
 				</div>
-				<div className = "col-xs-auto">
-					<i className={'far fa'+(this.state.isChecked ? '-check-':'')+'-square'}></i>
+				<div className = "col-xs-auto" onClick ={this.checkClick}>
+					<i className={'far fa'+(this.state.isChecked ? '-check':'')+'-square'}></i>
 				</div>
 			</div>
 		);
 	}
 
 	checkClick(){
-		this.setState({isChecked:!s.state.isChecked});
+		this.setState({isChecked:!this.state.isChecked},()=>{
+			this.props.addFilterQuery(this.props.tg, this.state.isChecked);
+		});
 	}
 }
 

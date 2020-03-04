@@ -33,7 +33,7 @@ class Event(models.Model):
     location = models.ForeignKey(Location,on_delete=models.CASCADE)
     remark = models.TextField(blank=True,max_length=100)
     description = models.TextField(max_length=800)
-    tags = models.ManyToManyField(EventTag)
+    tags = models.ManyToManyField(EventTag, blank=True)
     def __str__(self):
         return self.title
 
