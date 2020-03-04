@@ -115,7 +115,7 @@ class App extends Component{
 		}
 	}
 
-	//do the actual search for results
+	//do the actual search for results, render with results, save old data, floop!
 	filterSearch(){
 		var searchResults = this.state.data.filter(evt => {
 			for (var tag of evt.tags){
