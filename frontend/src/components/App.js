@@ -33,6 +33,7 @@ class App extends Component{
 		this.filterCallback = this.filterCallback.bind(this);
 		this.addFilterQuery = this.addFilterQuery.bind(this);
 		this.filterSearch= this.filterSearch.bind(this);
+		this.resetFilters= this.resetFilters.bind(this);
 	}
 
 	//callback executed when a panel is selected
@@ -140,6 +141,16 @@ class App extends Component{
 		});
 	}
 
+	//reset filters
+	resetFilters(){
+		this.setState({
+			data:this.state.oldData,
+			oldData:[],
+			filterData:[],
+			filterBarActive:false
+		});
+	}
+
 	//api call(s)
 	componentDidMount() {
 		fetch("api/events")
@@ -183,7 +194,7 @@ class App extends Component{
 	render() {
 		return (
 			<div>
-				<StickyMenu handler={this.changeActivePost} filterCallback = {this.filterCallback} eventState={this.state.eventActive} filterBarActive={this.state.filterBarActive}/>
+				<StickyMenu handler={this.changeActivePost} filterCallback = {this.filterCallback} eventState={this.state.eventActive} filterBarActive={this.state.filterBarActive} resetFilters={this.resetFilters}/>
 				<ul className = "list-group list-group-flush">
 					{this.state.data.map(evt => {
 						return (
@@ -256,7 +267,7 @@ function StickyMenu(props){
 							<p className = "pl-3 mb-0">Filter Events Active</p>
 						</div>
 						<div className = "col-6 text-right">
-							<p className = "mb-0 pr-3"><i className="fas fa-times-circle"></i> Reset Filters</p>
+							<p className = "mb-0 pr-3" onClick={props.resetFilters}><i className="fas fa-times-circle"></i> Reset Filters</p>
 						</div>
 					</div>
 				}
