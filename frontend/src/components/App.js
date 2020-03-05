@@ -34,6 +34,7 @@ class App extends Component{
 		this.addFilterQuery = this.addFilterQuery.bind(this);
 		this.filterSearch= this.filterSearch.bind(this);
 		this.resetFilters= this.resetFilters.bind(this);
+		this.keywordSearch = this.keywordSearch.bind(this);
 	}
 
 	//callback executed when a panel is selected
@@ -141,6 +142,13 @@ class App extends Component{
 		});
 	}
 
+	//keyword search
+	keywordSearch(e){
+		e.preventDefault();
+		e.stopPropagation();
+		console.log("search executed!");
+	}
+
 	//reset filters
 	resetFilters(){
 		this.setState({
@@ -151,8 +159,15 @@ class App extends Component{
 		});
 	}
 
+	stopLastpass(e){
+		if(e.keyCode==13){
+			e.stopPropagation();
+		}
+	}
+
 	//api call(s)
 	componentDidMount() {
+		document.addEventListener('keydown', this.stopLastpass, true);
 		fetch("api/events")
 			.then(response => {
 				if (response.status > 400) {
@@ -194,7 +209,7 @@ class App extends Component{
 	render() {
 		return (
 			<div>
-				<StickyMenu handler={this.changeActivePost} filterCallback = {this.filterCallback} eventState={this.state.eventActive} filterBarActive={this.state.filterBarActive} resetFilters={this.resetFilters}/>
+				<StickyMenu handler={this.changeActivePost} filterCallback = {this.filterCallback} eventState={this.state.eventActive} filterBarActive={this.state.filterBarActive} resetFilters={this.resetFilters} keywordSearch = {this.keywordSearch}/>
 				<ul className = "list-group list-group-flush">
 					{this.state.data.map(evt => {
 						return (
@@ -228,10 +243,15 @@ function StickyMenu(props){
 					<li className="nav-item" onClick = {(e)=>{props.filterCallback(e)}}>
 						<a className="nav-link" href="#"><i className="fas fa-filter"></i></a>
 					</li>
-					<li className="nav-item">
-						<a className = "nav-link" href = "#"><i className="fas fa-search"></i></a>
-					</li>
 				</ul>
+				<form type= "" className="form-inline" onSubmit={(e)=>{props.keywordSearch(e)}}>
+					<div className="input-group">
+						<input type="text" className="form-control" placeholder="Search" aria-label="event" aria-describedby="basic-addon1" onKeyPress={(e)=>{if(e.keyCode===13){props.keywordSearch(e)}}}/>
+						<div type="submit" className="input-group-append" onClick={(e)=>{props.keywordSearch(e)}}>
+							<span className="input-group-text" id="basic-addon1"><i className="fas fa-search"></i></span>
+						</div>
+					</div>
+				</form>
 			</div>
 		);
 	}
