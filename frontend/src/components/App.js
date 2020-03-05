@@ -146,7 +146,7 @@ class App extends Component{
 	keywordSearch(e){
 		e.preventDefault();
 		e.stopPropagation();
-		console.log("search executed!");
+		console.log(document.getElementById("panelInput").value);
 	}
 
 	//reset filters
@@ -246,7 +246,7 @@ function StickyMenu(props){
 				</ul>
 				<form type= "" className="form-inline" onSubmit={(e)=>{props.keywordSearch(e)}}>
 					<div className="input-group">
-						<input type="text" className="form-control" placeholder="Search" aria-label="event" aria-describedby="basic-addon1" onKeyPress={(e)=>{if(e.keyCode===13){props.keywordSearch(e)}}}/>
+						<input id="panelInput" type="text" className="form-control" placeholder="Search" aria-label="event" aria-describedby="basic-addon1" onKeyPress={(e)=>{if(e.keyCode===13){props.keywordSearch(e)}}}/>
 						<div type="submit" className="input-group-append" onClick={(e)=>{props.keywordSearch(e)}}>
 							<span className="input-group-text" id="basic-addon1"><i className="fas fa-search"></i></span>
 						</div>
