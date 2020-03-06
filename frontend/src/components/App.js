@@ -78,7 +78,6 @@ class App extends Component{
 	changeActivePost(e, filterActive = false){
 		e.preventDefault();
 		this.setState({eventActive:!this.state.eventActive,
-			filterData:[],
 		},()=>{
 			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
 			var eventElement = (
@@ -102,7 +101,7 @@ class App extends Component{
 					<p>Feel free to select whatever event types you want, and see if any events come up.</p>
 					{this.state.tagData.map(tg=>{
 						return(
-							<FilterObject tg = {tg} addFilterQuery = {this.addFilterQuery}/>
+							<FilterObject tg = {tg} addFilterQuery = {this.addFilterQuery} isChecked={this.state.filterData.indexOf(tg)!=-1}/>
 						);
 					})}
 					<h5 className = "text-center filterButton" onClick={(e)=>{this.filterSearch(e)}}>Show Results</h5>
@@ -125,7 +124,8 @@ class App extends Component{
 
 	//do the actual search for results, render with results, save old data, floop!
 	filterSearch(e){
-		var searchResults = this.state.data.filter(evt => {
+		var mainData = (this.state.filterBarActive) ? this.state.oldData : this.state.data;
+		var searchResults = mainData.filter(evt => {
 			for (var tag of evt.tags){
 				for (var filterTag of this.state.filterData){
 					if(tag.tag == filterTag.tag){return true;}
@@ -133,7 +133,7 @@ class App extends Component{
 			}
 			return false;
 		});
-		this.setState({oldData:this.state.data, 
+		this.setState({oldData:mainData, 
 			data:searchResults,
 			filterBarActive:true
 		},()=>{
@@ -144,9 +144,15 @@ class App extends Component{
 
 	//keyword search
 	keywordSearch(e){
+		this.setState({oldData:this.state.data},()=>{
+			e.preventDefault();
+			e.stopPropagation();
+			var query = document.getElementById("panelInput").value;
+			var results = this.state.oldData.filter((evt)=>{return evt.title.toLowerCase().includes(query.toLowerCase())});
+			console.log(results);
+			e.preventDefault();
+		});
 		e.preventDefault();
-		e.stopPropagation();
-		console.log(document.getElementById("panelInput").value);
 	}
 
 	//reset filters
@@ -244,7 +250,7 @@ function StickyMenu(props){
 						<a className="nav-link" href="#"><i className="fas fa-filter"></i></a>
 					</li>
 				</ul>
-				<form type= "" className="form-inline" onSubmit={(e)=>{props.keywordSearch(e)}}>
+				<form type= "" className="ml-auto form-inline" onSubmit={(e)=>{props.keywordSearch(e)}}>
 					<div className="input-group">
 						<input id="panelInput" type="text" className="form-control" placeholder="Search" aria-label="event" aria-describedby="basic-addon1" onKeyPress={(e)=>{if(e.keyCode===13){props.keywordSearch(e)}}}/>
 						<div type="submit" className="input-group-append" onClick={(e)=>{props.keywordSearch(e)}}>
@@ -299,7 +305,7 @@ function StickyMenu(props){
 class FilterObject extends Component{
 	constructor(props){
 		super(props);
-		this.state={isChecked:false};
+		this.state={isChecked:props.isChecked};
 		this.checkClick = this.checkClick.bind(this);
 	}
 
