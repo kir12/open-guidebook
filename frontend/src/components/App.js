@@ -137,22 +137,24 @@ class App extends Component{
 			data:searchResults,
 			filterBarActive:true
 		},()=>{
-			console.log(this.state.data);
 			this.changeActivePost(e);
 		});
 	}
 
 	//keyword search
+	//TODO: might have to implement EECS 376 version (dynamic programming)
 	keywordSearch(e){
-		this.setState({oldData:this.state.data},()=>{
-			e.preventDefault();
-			e.stopPropagation();
-			var query = document.getElementById("panelInput").value;
-			var results = this.state.oldData.filter((evt)=>{return evt.title.toLowerCase().includes(query.toLowerCase())});
-			console.log(results);
-			e.preventDefault();
-		});
+
 		e.preventDefault();
+		e.stopPropagation();
+		var mainData = (this.state.filterBarActive) ? this.state.oldData : this.state.data;
+		var query = document.getElementById("panelInput").value;
+		var results = mainData.filter((evt)=>{return evt.title.toLowerCase().includes(query.toLowerCase())});
+		this.setState({
+			oldData:mainData,
+			data:results,
+			filterBarActive:true
+		});
 	}
 
 	//reset filters
