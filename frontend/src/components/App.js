@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom';
 import React, { Component } from "react";
 import { render } from "react-dom";
+import Cookies from 'universal-cookie';
 
 var colormap = {
 	"fanpanel":"#0039A6",
@@ -13,6 +14,7 @@ var colormap = {
 	"autographs":"#B933AD"
 }
 
+const cookies = new Cookies();
 
 //processes the actual retrieval of events
 class App extends Component{
@@ -221,7 +223,7 @@ class App extends Component{
 				<ul className = "list-group list-group-flush">
 					{this.state.data.map(evt => {
 						return (
-							<EventClass isSelected={false} eventObj = {evt} handler={this.changeActive} eventState = {this.state.eventActive}/>
+							<EventClass isSelected={cookies.get("bookmarked").includes(evt.id)} eventObj = {evt} handler={this.changeActive} eventState = {this.state.eventActive}/>
 						);
 					})}
 				</ul>
@@ -336,13 +338,21 @@ class EventClass extends Component{
 	constructor(props){
 		super(props);
 		//this.clickEvent = this.clickEvent.bind(this);
-		this.state = {isSelected:props.isChecked};
+		this.state = {isSelected:props.isSelected};
 		this.selectBookmark = this.selectBookmark.bind(this);
 	}
 
 	selectBookmark(){
 		this.setState({isSelected:!this.state.isSelected},()=>{
-			console.log(this.props.eventObj.id);
+			var currentBookmarks = JSON.parse("["+cookies.get("bookmarked")+"]");
+			if(this.state.isSelected){
+				currentBookmarks.push(this.props.eventObj.id);
+			}
+			else{
+				currentBookmarks.splice(currentBookmarks.indexOf(this.props.eventObj.id),1);
+			}
+			cookies.set("bookmarked",currentBookmarks.toString(), {path:"/"});
+			console.log(cookies.get("bookmarked"));
 		});
 	}
 
