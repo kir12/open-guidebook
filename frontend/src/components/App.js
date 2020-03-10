@@ -221,7 +221,7 @@ class App extends Component{
 				<ul className = "list-group list-group-flush">
 					{this.state.data.map(evt => {
 						return (
-							<EventClass eventObj = {evt} handler={this.changeActive} eventState = {this.state.eventActive}/>
+							<EventClass isSelected={false} eventObj = {evt} handler={this.changeActive} eventState = {this.state.eventActive}/>
 						);
 					})}
 				</ul>
@@ -336,12 +336,21 @@ class EventClass extends Component{
 	constructor(props){
 		super(props);
 		//this.clickEvent = this.clickEvent.bind(this);
+		this.state = {isSelected:props.isChecked};
+		this.selectBookmark = this.selectBookmark.bind(this);
 	}
+
+	selectBookmark(){
+		this.setState({isSelected:!this.state.isSelected},()=>{
+			console.log(this.props.eventObj.id);
+		});
+	}
+
 	render(){
 		return(
-			<li onClick = {()=>{this.props.handler(this.props.eventObj)}} className = "list-group-item" key = {this.props.eventObj.title}>
+			<li className = "list-group-item" key = {this.props.eventObj.title}>
 				<div className = "row">
-					<div className = "col-11">
+					<div onClick = {()=>{this.props.handler(this.props.eventObj)}} className = "col-11">
 						<p><b>{this.props.eventObj.title}</b></p>
 						<div>
 							<p className = "mb-0">{App.displayTime(this.props.eventObj.start_time)} - {App.displayTime(this.props.eventObj.end_time)}, {this.props.eventObj.location}</p>
@@ -349,7 +358,7 @@ class EventClass extends Component{
 						</div>
 					</div>
 					<div className = "col-xs-auto align-self-center">
-						<i className="far fa-bookmark"></i>
+						<i onClick={this.selectBookmark} className={'fa'+(this.state.isSelected ? 's' : 'r')+ ' fa-bookmark'}></i>
 					</div>
 				</div>
 			</li>
