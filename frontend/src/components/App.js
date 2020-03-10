@@ -37,6 +37,12 @@ class App extends Component{
 		this.filterSearch= this.filterSearch.bind(this);
 		this.resetFilters= this.resetFilters.bind(this);
 		this.keywordSearch = this.keywordSearch.bind(this);
+		try{//trigger exception if cookie already not created
+			cookies.get("bookmarked").includes("A");
+		}
+		catch(err){
+			cookies.set("bookmarked","",{path:"/"});
+		}
 	}
 
 	//callback executed when a panel is selected
@@ -223,7 +229,7 @@ class App extends Component{
 				<ul className = "list-group list-group-flush">
 					{this.state.data.map(evt => {
 						return (
-							<EventClass isSelected={cookies.get("bookmarked").includes(evt.id)} eventObj = {evt} handler={this.changeActive} eventState = {this.state.eventActive}/>
+							<EventClass eventObj = {evt} handler={this.changeActive} eventState = {this.state.eventActive}/>
 						);
 					})}
 				</ul>
@@ -338,7 +344,7 @@ class EventClass extends Component{
 	constructor(props){
 		super(props);
 		//this.clickEvent = this.clickEvent.bind(this);
-		this.state = {isSelected:props.isSelected};
+		this.state = {isSelected:cookies.get("bookmarked").includes(this.props.eventObj.id)};
 		this.selectBookmark = this.selectBookmark.bind(this);
 	}
 
