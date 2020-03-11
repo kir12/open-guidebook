@@ -86,6 +86,7 @@ class App extends Component{
 	changeActivePost(e, filterActive = false){
 		e.preventDefault();
 		this.setState({eventActive:!this.state.eventActive,
+			eventObj:null
 		},()=>{
 			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
 			var eventElement = (
@@ -225,7 +226,7 @@ class App extends Component{
 	render() {
 		return (
 			<div>
-				<StickyMenu handler={this.changeActivePost} filterCallback = {this.filterCallback} eventState={this.state.eventActive} filterBarActive={this.state.filterBarActive} resetFilters={this.resetFilters} keywordSearch = {this.keywordSearch}/>
+				<StickyMenu eventObj = {this.state.eventObj} handler={this.changeActivePost} filterCallback = {this.filterCallback} eventState={this.state.eventActive} filterBarActive={this.state.filterBarActive} resetFilters={this.resetFilters} keywordSearch = {this.keywordSearch}/>
 				<ul className = "list-group list-group-flush">
 					{this.state.data.map(evt => {
 						return (
@@ -279,11 +280,13 @@ function StickyMenu(props){
 						<a className="nav-link" href = "#"><i className="fas fa-arrow-left"></i></a>
 					</li>
 				</ul>
+				{props.eventObj != null &&
 				<ul className="navbar-nav">
 					<li className="nav-item" href="#">
 						<a className="nav-link" href = "#"><i className="far fa-bookmark"></i></a>
 					</li>
 				</ul>
+				}
 			</div>
 		);
 	}
