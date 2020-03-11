@@ -344,7 +344,7 @@ class EventClass extends Component{
 	constructor(props){
 		super(props);
 		//this.clickEvent = this.clickEvent.bind(this);
-		this.state = {isSelected:cookies.get("bookmarked").includes(this.props.eventObj.id)};
+		this.state = {isSelected:JSON.parse("["+cookies.get("bookmarked")+"]").indexOf(this.props.eventObj.id)!=-1};
 		this.selectBookmark = this.selectBookmark.bind(this);
 	}
 
