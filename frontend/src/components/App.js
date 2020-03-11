@@ -27,8 +27,9 @@ class App extends Component{
 			loaded: false,
 			placeholder: "Loading",
 			eventActive:false,
+			eventActiveSelected:false, 
 			filterBarActive:false
-		};
+		}; //eventActiveSelected: is the current event selected bookmarked?
 		//various callbacks registered here
 		this.changeActive = this.changeActive.bind(this);
 		this.changeActivePost = this.changeActivePost.bind(this);
@@ -46,10 +47,11 @@ class App extends Component{
 	}
 
 	//callback executed when a panel is selected
-	changeActive(evt){
+	changeActive(evt, evtSelect){
 		this.setState({eventActive:!this.state.eventActive,
 			eventObj:evt,
-			scrollAmount: window.pageYOffset
+			scrollAmount: window.pageYOffset,
+			eventActiveSelected:evtSelect
 		},()=>{
 			var showStatus = this.state.eventActive == true ? 'show' : 'hide';
 			var eventElement = (
@@ -226,7 +228,7 @@ class App extends Component{
 	render() {
 		return (
 			<div>
-				<StickyMenu eventObj = {this.state.eventObj} handler={this.changeActivePost} filterCallback = {this.filterCallback} eventState={this.state.eventActive} filterBarActive={this.state.filterBarActive} resetFilters={this.resetFilters} keywordSearch = {this.keywordSearch}/>
+				<StickyMenu eventActiveSelected = {this.state.eventActiveSelected} eventObj = {this.state.eventObj} handler={this.changeActivePost} filterCallback = {this.filterCallback} eventState={this.state.eventActive} filterBarActive={this.state.filterBarActive} resetFilters={this.resetFilters} keywordSearch = {this.keywordSearch}/>
 				<ul className = "list-group list-group-flush">
 					{this.state.data.map(evt => {
 						return (
@@ -283,7 +285,7 @@ function StickyMenu(props){
 				{props.eventObj != null &&
 				<ul className="navbar-nav">
 					<li className="nav-item" href="#">
-						<a className="nav-link" href = "#"><i className="far fa-bookmark"></i></a>
+						<a className="nav-link" href = "#"><i className={"fa"+(props.eventActiveSelected ? "s" :"r")+" fa-bookmark"}></i></a>
 					</li>
 				</ul>
 				}
@@ -369,7 +371,7 @@ class EventClass extends Component{
 		return(
 			<li className = "list-group-item" key = {this.props.eventObj.title}>
 				<div className = "row">
-					<div onClick = {()=>{this.props.handler(this.props.eventObj)}} className = "col-11">
+					<div onClick = {()=>{this.props.handler(this.props.eventObj,this.state.isSelected)}} className = "col-11">
 						<p><b>{this.props.eventObj.title}</b></p>
 						<div>
 							<p className = "mb-0">{App.displayTime(this.props.eventObj.start_time)} - {App.displayTime(this.props.eventObj.end_time)}, {this.props.eventObj.location}</p>
