@@ -5,7 +5,7 @@
 Conventions of all types benefit from having some kind of mobile guidebook for displaying events.
 There's a bunch of apps out there which offer efforltess creation of guidebooks ... at a (pricy) cost.
 This project is an open-source implementation which aims to provide a free app.
-To further aid deployment, it's also set up as a Docker container that you can simply plop inside a server, set it up for an event, and then destroy everything afterwards.
+To further aid deployment, it will (eventually) be set up as a Docker container that you can simply plop inside a server, set it up for an event, and then destroy everything afterwards.
 
 ## Requirements
 
