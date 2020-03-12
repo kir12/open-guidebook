@@ -1,4 +1,4 @@
-# cjn-webapp
+# open-guidebook
 
 ## Motivation
 
